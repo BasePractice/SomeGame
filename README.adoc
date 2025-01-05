@@ -1,0 +1,16 @@
+= Сборка
+
+image:https://github.com/BasePractice/SomeGame/actions/workflows/maven.yml/badge.svg[]
+
+== План
+
+* [x] Создать репозиторий
+* [ ] Договориться об архитектуре
+** [ ] Бэк
+*** [ ] `WebSocket`, `Spring Framework`, токен аутентификации, `PostgreSQL`(`H2`), `Flayway`
+** [ ] Фронт
+*** [ ] `JavaScript`, `Canvas`
+** [ ] Мобилка
+* [ ] Договориться о логике
+* [ ] `TileSet`
+

@@ -1,0 +1,9 @@
+= 6 января 2025 г.
+
+== Общая архитектура
+image::images/architectory.png[]
+== Логика игры
+image::images/logics.png[]
+== Отображение
+image::images/game-logic1.png[]
+image::images/game-logic2.png[]
