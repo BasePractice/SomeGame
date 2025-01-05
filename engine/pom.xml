@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>ru.base.game</groupId>
-    	<artifactId>some</artifactId>
-    	<version>2025.1</version>
-    	<relativePath>../pom.xml</relativePath>
+        <artifactId>some</artifactId>
+        <version>2025.1</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>engine</artifactId>
     <name>engine</name>
@@ -16,6 +16,10 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
         </dependency>
     </dependencies>
 </project>

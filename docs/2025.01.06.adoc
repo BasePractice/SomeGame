@@ -7,3 +7,12 @@ image::images/logics.png[]
 == Отображение
 image::images/game-logic1.png[]
 image::images/game-logic2.png[]
+image::images/game-logic3.png[]
+
+== Последовательность команд
+
+[source,text]
+----
+w{100}a{1}a{2}aaaaaaaap{1,2,3}
+----
+
