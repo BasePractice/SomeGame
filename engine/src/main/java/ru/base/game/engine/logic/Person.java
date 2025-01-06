@@ -1,7 +1,5 @@
 package ru.base.game.engine.logic;
 
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,8 +54,7 @@ public interface Person extends Updatable {
     }
 
     final class Mob extends AbstractPerson {
-        @Getter
-        private final int index;
+        public final int index;
         private final Item.DamageItem damage;
         //NOTICE: Если агрессивный, то бьет первым
         private boolean aggressive;
@@ -97,8 +94,7 @@ public interface Person extends Updatable {
     final class Player extends AbstractPerson {
         private static final Item FIST = new Item.DamageItem(5);
         private final List<Item> inventory = new ArrayList<>();
-        @Getter
-        private Item selectedItem;
+        public Item selectedItem;
 
         public Player(String name) {
             super(name, 100);

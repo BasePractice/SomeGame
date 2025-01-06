@@ -23,7 +23,7 @@ public abstract class Main {
         AdventureGame game = new AdventureGame(transmit, player);
         LinkedList<Character> commands = new LinkedList<>();
         boolean isRunning = true;
-        while (isRunning && game.isRunning()) {
+        while (isRunning && game.isRunning) {
             if (commands.isEmpty()) {
                 transmit.print("Input player command: ");
                 String input = transmit.readText();

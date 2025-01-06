@@ -1,6 +1,5 @@
 package ru.base.game.engine;
 
-import lombok.Getter;
 import ru.base.game.engine.logic.Item;
 import ru.base.game.engine.logic.Person;
 import ru.base.game.engine.logic.Updatable;
@@ -18,14 +17,13 @@ public final class AdventureGame implements Updatable, Updatable.Context {
     private final Object[] gameLine = new Object[GAME_LINE_LENGTH + 1];
     private final Output output;
     private final Person.Player player;
+    public boolean isRunning;
     private int index;
-    @Getter
-    private boolean running;
 
     public AdventureGame(Output output, Person.Player player) {
         this.output = output;
         this.player = player;
-        running = true;
+        isRunning = true;
         nextGameLine();
     }
 
@@ -83,10 +81,10 @@ public final class AdventureGame implements Updatable, Updatable.Context {
     public void died(Person person) {
         if (person instanceof Person.Player) {
             output.println("Game over");
-            running = false;
+            isRunning = false;
         } else if (person instanceof Person.Mob mob) {
             gameLine[index] = null;
-            index = mob.getIndex();
+            index = mob.index;
             gameLine[index] = player;
             player.addInventory(new Item.Health(100 - player.health()));
         }
@@ -112,7 +110,7 @@ public final class AdventureGame implements Updatable, Updatable.Context {
 
     @Override
     public View view(Person.Mob mob) {
-        int i = mob.getIndex();
+        int i = mob.index;
         Objects.checkIndex(i - 1, gameLine.length);
         return viewIndex(i - 1);
     }
@@ -144,7 +142,7 @@ public final class AdventureGame implements Updatable, Updatable.Context {
         View view = playerView();
         if (view.type() == Type.ENEMY) {
             Person.Mob mob = (Person.Mob) view.element();
-            mob.hit(player.getSelectedItem(), this);
+            mob.hit(player.selectedItem, this);
         } else {
             output.println("We cant kick empty space");
         }
@@ -161,7 +159,7 @@ public final class AdventureGame implements Updatable, Updatable.Context {
     public void catchItem() {
         Updatable.View view = playerView();
         if (view.type() == Updatable.Type.ITEM) {
-            player.addInventory((Item)view.element());
+            player.addInventory((Item) view.element());
             gameLine[index + 1] = null;
             forward();
         }
