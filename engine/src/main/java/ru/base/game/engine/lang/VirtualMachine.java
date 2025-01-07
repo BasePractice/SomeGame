@@ -1,7 +1,7 @@
 package ru.base.game.engine.lang;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public interface VirtualMachine extends Program {
 
@@ -13,7 +13,7 @@ public interface VirtualMachine extends Program {
 
     final class Default implements VirtualMachine, Evaluator {
         private final Evaluator evaluator;
-        private final List<Command.Instance> commands = new ArrayList<>();
+        private final List<Command.Instance> commands = new CopyOnWriteArrayList<>();
         private int index;
 
         public Default(Evaluator evaluator) {
@@ -51,7 +51,8 @@ public interface VirtualMachine extends Program {
                     }
                 }
             }
-            return evaluator.evaluate(instance);
+            evaluator.evaluate(instance);
+            return instance.index() + 1;
         }
 
         @Override
