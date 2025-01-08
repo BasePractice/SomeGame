@@ -1,68 +1,61 @@
 package ru.base.game.engine;
 
+import ru.base.game.engine.map.LevelMapGenerator;
+
 import java.util.Objects;
 
 @SuppressWarnings("PMD.UnusedPrivateMethod")
-public interface Map {
+public interface Map extends Element {
 
     <E> E at(int x, int y, Layer layer);
 
     void set(int x, int y, Layer layer, Object value);
 
+    static Generator generator() {
+        return new LevelMapGenerator();
+    }
+
     enum Layer {
-        BLOCKS, ITEMS, VISITED;
+        BLOCKS, ITEMS, ENEMIES, VISIBLE, EVENTS;
 
         @SuppressWarnings("unchecked")
-        private <E> E at(Element element) {
+        public <E> E at(MapElement element) {
             return (E) element.layers[ordinal()];
         }
 
-        private void set(Element element, Object value) {
-            element.layers[ordinal()] = value;
+        public void set(MapElement element, Object value) {
+            element.set(ordinal(), value);
         }
 
-        static final class Element {
-            private final Object[] layers;
+    }
 
-            Element(int size) {
-                this.layers = new Object[size];
-            }
+    @FunctionalInterface
+    interface Generator {
+        Map generate(int level, int width, int height, Kind kind);
 
-            private void set(int index, Object value) {
-                Objects.checkIndex(index, layers.length);
-                layers[index] = value;
-            }
+        enum Kind {
+            D1D, D2D
         }
     }
 
-    final class Default implements Map {
-        private final Layer.Element[][] elements;
+    int width();
 
-        public Default(int width, int height) {
-            this.elements = new Layer.Element[width][height];
-            for (int i = 0; i < width; i++) {
-                for (int j = 0; j < height; j++) {
-                    Layer.BLOCKS.set(elements[i][j], BlockType.EMPTY);
-                }
-            }
-        }
-
-        @Override
-        public <E> E at(int x, int y, Layer layer) {
-            return layer.at(elements[x][y]);
-        }
-
-        @Override
-        public void set(int x, int y, Layer layer, Object value) {
-            layer.set(elements[x][y], value);
-        }
-    }
+    int height();
 
     enum BlockType {
         EMPTY, WALL
     }
 
-    enum ElementType {
-        ENEMY, ITEM, EVENT, ENTER, EXIT
+    final class MapElement {
+        private final Object[] layers;
+
+        public MapElement(int size) {
+            this.layers = new Object[size];
+        }
+
+        private void set(int index, Object value) {
+            Objects.checkIndex(index, layers.length);
+            layers[index] = value;
+        }
     }
 }
