@@ -31,24 +31,24 @@ final class HuntAndKill {
     public void kill(int x, int y) {
         while ((x != 0 && data[x - 1][y] == 0) || (x != (rows - 1) && data[x + 1][y] == 0) ||
             (y != 0 && data[x][y - 1] == 0) || (y != (cols - 1) && data[x][y + 1] == 0)) {
-            int c = (random.nextInt(3) - 1);
-            int d = (random.nextInt(3) - 1);
-            if (c == -1 && d == 0 && (x != 0 && data[x + c][y + d] == 0)) {
+            int c = random.nextInt(3) - 1;
+            int d = random.nextInt(3) - 1;
+            if (c == -1 && d == 0 && x != 0 && data[x + c][y + d] == 0) {
                 data[x][y] -= 2;
                 x -= 1;
                 data[x][y] = 7;
             }
-            if (c == 1 && d == 0 && (x != (rows - 1) && data[x + c][y + d] == 0)) {
+            if (c == 1 && d == 0 && x != (rows - 1) && data[x + c][y + d] == 0) {
                 data[x][y] -= 8;
                 x += 1;
                 data[x][y] = 13;
             }
-            if (c == 0 && d == -1 && (y != 0 && data[x + c][y + d] == 0)) {
+            if (c == 0 && d == -1 && y != 0 && data[x + c][y + d] == 0) {
                 data[x][y] -= 1;
                 y -= 1;
                 data[x][y] = 11;
             }
-            if (c == 0 && d == 1 && (y != (cols - 1) && data[x + c][y + d] == 0)) {
+            if (c == 0 && d == 1 && y != (cols - 1) && data[x + c][y + d] == 0) {
                 data[x][y] -= 4;
                 y += 1;
                 data[x][y] = 14;

@@ -45,7 +45,7 @@ public abstract class Mob implements Enemy {
 
     @Override
     public void tick(Context context) {
-        if (inBattle) {
+        if (inBattle && context.canAttack()) {
             context.attack(selectedItem);
         }
     }

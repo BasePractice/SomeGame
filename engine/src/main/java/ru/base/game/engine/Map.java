@@ -22,7 +22,7 @@ public interface Map extends Element {
     String toString(int x, int y);
 
     enum Layer {
-        BLOCKS, ITEMS, ENEMIES, VISIBLE, EVENTS;
+        BLOCKS, ITEMS, ENEMIES, VISIBLE, EVENTS, PATHS;
 
         @SuppressWarnings("unchecked")
         public <E> E at(MapElement element) {
@@ -50,6 +50,10 @@ public interface Map extends Element {
 
     enum BlockType {
         EMPTY, WALL
+    }
+
+    enum PathMarker {
+        MARKER
     }
 
     record Coordinated<E>(int x, int y, E source) {

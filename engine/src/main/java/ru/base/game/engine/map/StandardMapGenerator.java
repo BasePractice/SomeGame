@@ -39,19 +39,23 @@ public final class StandardMapGenerator implements Map.Generator {
             }
         } else if (kind == Kind.D2D) {
             MazeExtension extension = mazeFactory.create(MazeExtension.Factory.Type.BTE);
-            MazeExtension.Maze generated = extension.generateMaze(height / 3, width / 3);
-            map.set(1, 1, Map.Layer.EVENTS, new Enter(this));
-            map.set(width - 1, height - 1, Map.Layer.EVENTS, new Exit(this));
+            MazeExtension.Maze generated = extension.generateMaze(height / 2, width / 2);
+
+            for (int x = 0; x < width; x++) {
+                map.set(x, 0, Map.Layer.BLOCKS, Map.BlockType.WALL);
+                map.set(x, height - 1, Map.Layer.BLOCKS, Map.BlockType.WALL);
+            }
+            for (int y = 0; y < height; y++) {
+                map.set(0, y, Map.Layer.BLOCKS, Map.BlockType.WALL);
+                map.set(width - 1, y, Map.Layer.BLOCKS, Map.BlockType.WALL);
+            }
+
             for (int y = 0; y < generated.cols; y++) {
                 for (int x = 0; x < generated.rows; x++) {
                     var d = generated.data[y][x];
-                    var xTo = x * 3 + 1;
-                    var yTo = y * 3 + 1;
-                    if ((d & MazeExtension.SQUARE_DOWN) == MazeExtension.SQUARE_DOWN) {
-                        map.set(xTo - 1, yTo + 1, Map.Layer.BLOCKS, Map.BlockType.WALL);
-                        map.set(xTo, yTo + 1, Map.Layer.BLOCKS, Map.BlockType.WALL);
-                        map.set(xTo + 1, yTo + 1, Map.Layer.BLOCKS, Map.BlockType.WALL);
-                    } else if ((d & MazeExtension.SQUARE_UP) == MazeExtension.SQUARE_UP) {
+                    var xTo = y * 2 + 1;
+                    var yTo = x * 2 + 1;
+                    if ((d & MazeExtension.SQUARE_UP) == MazeExtension.SQUARE_UP) {
                         map.set(xTo - 1, yTo - 1, Map.Layer.BLOCKS, Map.BlockType.WALL);
                         map.set(xTo, yTo - 1, Map.Layer.BLOCKS, Map.BlockType.WALL);
                         map.set(xTo + 1, yTo - 1, Map.Layer.BLOCKS, Map.BlockType.WALL);
@@ -66,8 +70,26 @@ public final class StandardMapGenerator implements Map.Generator {
                     }
                 }
             }
+            map.set(1, 1, Map.Layer.EVENTS, new Enter(this));
+            map.set(width - 1, height - 1, Map.Layer.EVENTS, new Exit(this));
+            MazeExtension.Point[] path = extension.findPath(generated);
+            int lxTo = -1;
+            int lyTo = -1;
+            for (MazeExtension.Point pt : path) {
+                var xTo = pt.y() * 2 + 1;
+                var yTo = pt.x() * 2 + 1;
+                map.set(xTo, yTo, Map.Layer.PATHS, Map.PathMarker.MARKER);
+                if (lxTo != -1) {
+                    if (xTo == lxTo) {
+                        map.set(xTo, yTo - 1, Map.Layer.PATHS, Map.PathMarker.MARKER);
+                    } else if (yTo == lyTo) {
+                        map.set(xTo - 1, yTo, Map.Layer.PATHS, Map.PathMarker.MARKER);
+                    }
+                }
+                lxTo = xTo;
+                lyTo = yTo;
+            }
             try {
-                MazeExtension.Point[] path = extension.findPath(generated);
                 BufferedImage image = MazeUtilities.createImage(generated, path);
                 ImageIO.write(image, "PNG", new File(String.format("2D.Level-%d.png", level)));
             } catch (Exception e) {
