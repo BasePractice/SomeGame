@@ -14,7 +14,12 @@ class EvaluatorTest {
     void objectEvaluator() {
         final boolean[] left = new boolean[]{false};
         final int[] loot = new int[]{0};
-        Evaluator evaluator = new Evaluator.ObjectEvaluator(new Object() {
+        Evaluator evaluator = new Evaluator.ObjectEvaluator(new Evaluator.ObjectTarget() {
+            @Override
+            public void after(Command.Instance instance, Object result) {
+                //Nothing
+            }
+
             private void left() {
                 left[0] = true;
             }

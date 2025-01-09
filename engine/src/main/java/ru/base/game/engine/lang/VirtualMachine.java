@@ -20,7 +20,7 @@ public interface VirtualMachine extends Program {
             this.evaluator = evaluator;
         }
 
-        public Default(Object target) {
+        public Default(ObjectTarget target) {
             this(new ObjectEvaluator(target));
         }
 

@@ -1,8 +1,12 @@
 package ru.base.game.engine.map;
 
+import ru.base.game.engine.Context;
 import ru.base.game.engine.Enemy;
 import ru.base.game.engine.Event;
 import ru.base.game.engine.Map;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class StandardMap implements Map {
     private final MapElement[][] elements;
@@ -20,7 +24,26 @@ public final class StandardMap implements Map {
 
     @Override
     public <E> E at(int x, int y, Layer layer) {
-        return layer.at(elements[y][x]);
+        if (y >= 0 && y < elements.length && x >= 0 && x < elements[y].length) {
+            return layer.at(elements[y][x]);
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <E> List<Coordinated<E>> list(Layer layer) {
+        List<Coordinated<E>> list = new ArrayList<>();
+        for (int y = 0; y < elements.length; y++) {
+            for (int x = 0; x < elements[y].length; x++) {
+                MapElement mapElement = elements[y][x];
+                Object object = layer.at(mapElement);
+                if (object != null) {
+                    list.add(new Coordinated<>(x, y, (E) object));
+                }
+            }
+        }
+        return list;
     }
 
     @Override
@@ -39,11 +62,13 @@ public final class StandardMap implements Map {
     }
 
     @Override
-    public String toString() {
+    public String toString(int xPlayer, int yPlayer) {
         StringBuilder builder = new StringBuilder();
-        for (MapElement[] value : elements) {
+        for (int y = 0; y < elements.length; y++) {
+            MapElement[] elementsLine = elements[y];
             StringBuilder line = new StringBuilder();
-            for (MapElement element : value) {
+            for (int x = 0; x < elementsLine.length; x++) {
+                MapElement element = elementsLine[x];
                 if (!line.isEmpty()) {
                     line.append(" | ");
                 }
@@ -52,7 +77,9 @@ public final class StandardMap implements Map {
                 Object item = Layer.ITEMS.at(element);
                 Enemy enemy = Layer.ENEMIES.at(element);
                 Event event = Layer.EVENTS.at(element);
-                if (type == BlockType.WALL) {
+                if (x == xPlayer && y == yPlayer) {
+                    line.append("P");
+                } else if (type == BlockType.WALL) {
                     line.append("x");
                 } else if (!visible) {
                     line.append("?");
@@ -78,16 +105,21 @@ public final class StandardMap implements Map {
     }
 
     @Override
-    public void tick() {
+    public String toString() {
+        return toString(-1, -1);
+    }
+
+    @Override
+    public void tick(Context context) {
         for (MapElement[] element : elements) {
             for (MapElement mapElement : element) {
                 Event event = Layer.EVENTS.at(mapElement);
                 if (event != null) {
-                    event.tick();
+                    event.tick(context);
                 }
                 Enemy enemy = Layer.ENEMIES.at(mapElement);
                 if (enemy != null) {
-                    enemy.tick();
+                    enemy.tick(context);
                 }
             }
         }

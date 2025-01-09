@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-interface Parser {
+public interface Parser {
     Command.Instance[] parse();
 
     final class Default implements Parser {

@@ -1,15 +1,16 @@
 package ru.base.game.engine.map;
 
-import ru.base.game.engine.Enemy;
-import ru.base.game.engine.Event;
-import ru.base.game.engine.Item;
 import ru.base.game.engine.Map;
+import ru.base.game.engine.enemies.Human;
+import ru.base.game.engine.events.Enter;
+import ru.base.game.engine.events.Exit;
+import ru.base.game.engine.items.DamagedItem;
 
 import java.util.Date;
 import java.util.Random;
 
 @SuppressWarnings("PMD.EmptyControlStatement")
-public final class LevelMapGenerator implements Map.Generator {
+public final class StandardMapGenerator implements Map.Generator {
     private final Random random = new Random(new Date().getTime());
 
     @Override
@@ -19,8 +20,8 @@ public final class LevelMapGenerator implements Map.Generator {
         }
         StandardMap map = new StandardMap(width, height);
         if (kind == Kind.D1D) {
-            map.set(0, 1, Map.Layer.EVENTS, Event.of(Event.Type.ENTER, map));
-            map.set(width - 1, 1, Map.Layer.EVENTS, Event.of(Event.Type.EXIT, map));
+            map.set(0, 1, Map.Layer.EVENTS, new Enter(this));
+            map.set(width - 1, 1, Map.Layer.EVENTS, new Exit(this));
             for (int x = 0; x < width; x++) {
                 map.set(x, 0, Map.Layer.BLOCKS, Map.BlockType.WALL);
                 map.set(x, 2, Map.Layer.BLOCKS, Map.BlockType.WALL);
@@ -45,7 +46,8 @@ public final class LevelMapGenerator implements Map.Generator {
         while (true) {
             var bt = map.at(x, y, Map.Layer.BLOCKS);
             var event = map.at(x, y, Map.Layer.EVENTS);
-            if (bt == Map.BlockType.EMPTY && event == null) {
+            var item = map.at(x, y, Map.Layer.ITEMS);
+            if (bt == Map.BlockType.EMPTY && event == null && item == null) {
                 break;
             }
             x = random.nextInt(map.width() - 1);
@@ -54,11 +56,11 @@ public final class LevelMapGenerator implements Map.Generator {
         map.set(x, y, Map.Layer.VISIBLE, false);
         switch (layer) {
             case ITEMS: {
-                map.set(x, y, Map.Layer.ITEMS, Item.empty());
+                map.set(x, y, Map.Layer.ITEMS, new DamagedItem(10));
                 break;
             }
             case ENEMIES: {
-                map.set(x, y, Map.Layer.ENEMIES, Enemy.empty());
+                map.set(x, y, Map.Layer.ENEMIES, new Human(random.nextInt(90) + 20));
                 break;
             }
             default: {

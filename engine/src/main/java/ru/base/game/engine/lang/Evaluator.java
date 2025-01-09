@@ -12,9 +12,9 @@ public interface Evaluator {
 
     final class ObjectEvaluator implements Evaluator {
         private final Map<String, Method> methods = new HashMap<>();
-        private final Object object;
+        private final ObjectTarget object;
 
-        public ObjectEvaluator(Object object) {
+        public ObjectEvaluator(ObjectTarget object) {
             this.object = object;
         }
 
@@ -35,7 +35,9 @@ public interface Evaluator {
             String methodName = command.name().toLowerCase(Locale.ROOT);
             Method method = methods.computeIfAbsent(methodName, name -> searchMethod(name, args));
             try {
-                method.invoke(object, args);
+                object.before(instance);
+                Object result = method.invoke(object, args);
+                object.after(instance, result);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
@@ -53,6 +55,16 @@ public interface Evaluator {
                 }
             }
             throw new UnsupportedOperationException(name);
+        }
+    }
+
+    interface ObjectTarget {
+        default void after(Command.Instance instance, Object result) {
+            //Nothing
+        }
+
+        default void before(Command.Instance instance) {
+            //Nothing
         }
     }
 }

@@ -6,18 +6,9 @@ public interface Event extends Element {
 
     Object source();
 
+    boolean activate(Context context);
+
     enum Type {
         ENTER, EXIT
-    }
-
-    static Event of(Type type, Object source) {
-        return new Default(type, source);
-    }
-
-    record Default(Type type, Object source) implements Event {
-        @Override
-        public void tick() {
-            //Nothing
-        }
     }
 }

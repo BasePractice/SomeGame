@@ -1,7 +1,8 @@
 package ru.base.game.engine;
 
-import ru.base.game.engine.map.LevelMapGenerator;
+import ru.base.game.engine.map.StandardMapGenerator;
 
+import java.util.List;
 import java.util.Objects;
 
 @SuppressWarnings("PMD.UnusedPrivateMethod")
@@ -9,11 +10,15 @@ public interface Map extends Element {
 
     <E> E at(int x, int y, Layer layer);
 
+    <E> List<Coordinated<E>> list(Layer layer);
+
     void set(int x, int y, Layer layer, Object value);
 
     static Generator generator() {
-        return new LevelMapGenerator();
+        return new StandardMapGenerator();
     }
+
+    String toString(int x, int y);
 
     enum Layer {
         BLOCKS, ITEMS, ENEMIES, VISIBLE, EVENTS;
@@ -44,6 +49,9 @@ public interface Map extends Element {
 
     enum BlockType {
         EMPTY, WALL
+    }
+
+    record Coordinated<E>(int x, int y, E source) {
     }
 
     final class MapElement {

@@ -1,5 +1,6 @@
 package ru.base.game.engine.items;
 
+import ru.base.game.engine.Context;
 import ru.base.game.engine.Item;
 
 public class DamagedItem implements Item {
@@ -10,7 +11,7 @@ public class DamagedItem implements Item {
     }
 
     @Override
-    public void tick() {
+    public void tick(Context context) {
         //Nothing
     }
 
