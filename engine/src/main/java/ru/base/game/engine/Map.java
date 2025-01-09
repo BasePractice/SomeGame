@@ -11,7 +11,9 @@ public interface Map extends Element {
 
     <E> E at(int x, int y, Layer layer);
 
-    <E> List<Coordinated<E>> list(Layer layer);
+    <E> List<Coordinated<E>> matrix(Layer layer);
+
+    Coordinated<Matrix> matrix(int x, int y, int radius);
 
     void set(int x, int y, Layer layer, Object value);
 
@@ -70,6 +72,30 @@ public interface Map extends Element {
         private void set(int index, Object value) {
             Objects.checkIndex(index, layers.length);
             layers[index] = value;
+        }
+    }
+
+    final class Matrix {
+        private final MapElement[][] elements;
+
+        public Matrix(int size) {
+            this.elements = new MapElement[size][size];
+        }
+
+        public MapElement at(int x, int y) {
+            return elements[y][x];
+        }
+
+        public void set(int x, int y, MapElement element) {
+            elements[y][x] = element;
+        }
+
+        public int height() {
+            return elements.length;
+        }
+
+        public int width() {
+            return elements[0].length;
         }
     }
 }
