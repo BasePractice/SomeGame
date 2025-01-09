@@ -1,5 +1,6 @@
 package ru.base.game.engine;
 
+import com.google.gson.annotations.SerializedName;
 import ru.base.game.engine.map.StandardMapGenerator;
 
 import java.util.List;
@@ -55,6 +56,7 @@ public interface Map extends Element {
     }
 
     final class MapElement {
+        @SerializedName("layers")
         private final Object[] layers;
 
         public MapElement(int size) {

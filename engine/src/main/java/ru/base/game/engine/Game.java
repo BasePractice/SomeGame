@@ -17,6 +17,7 @@ public final class Game implements Evaluator.ObjectTarget, Context {
     private final int width = 20;
     private final int height = 20;
     private final Player player = new Player();
+    private boolean userAttacked = false;
     private Map map;
     private State state = State.INITIATE;
 
@@ -39,6 +40,7 @@ public final class Game implements Evaluator.ObjectTarget, Context {
                 break;
             }
             case NEXT_LEVEL: {
+                userAttacked = false;
                 player.flyTo(0, 0);
                 map = generator.generate(level.getAndIncrement(), width, height, Map.Generator.Kind.D1D);
                 map.list(Map.Layer.EVENTS).stream()
@@ -104,10 +106,20 @@ public final class Game implements Evaluator.ObjectTarget, Context {
                 }
             } else {
                 change(State.BATTLE);
+                if (userAttacked) {
+                    //Пользователь уже атаковал Enemy
+                    return;
+                }
+                userAttacked = true;
                 enemy.attack(player.selectedItem);
                 if (enemy.isDead()) {
                     map.set(x, y, Map.Layer.ENEMIES, null);
+                    Enemy.Bonus bonus = enemy.dieBonus();
+                    if (bonus != null) {
+                        bonus.apply(player);
+                    }
                     change(State.RUNNING);
+                    userAttacked = false;
                 }
             }
         } else {
@@ -136,6 +148,7 @@ public final class Game implements Evaluator.ObjectTarget, Context {
     }
 
     private void select(int itemIndex) {
+        player.selectItem(itemIndex);
         System.out.println("select: " + itemIndex);
     }
 
@@ -178,6 +191,7 @@ public final class Game implements Evaluator.ObjectTarget, Context {
     @Override
     public void attack(DamagedItem selectedItem) {
         player.hit(selectedItem.damage());
+        userAttacked = false;
         if (player.isDead()) {
             change(State.GAME_OVER);
         } else {
@@ -188,6 +202,11 @@ public final class Game implements Evaluator.ObjectTarget, Context {
     @Override
     public void nextLevel() {
         state = State.NEXT_LEVEL;
+    }
+
+    @Override
+    public boolean canAttack() {
+        return userAttacked;
     }
 
     private enum State {

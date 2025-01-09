@@ -3,6 +3,8 @@ package ru.base.game.engine;
 import ru.base.game.engine.items.DamagedItem;
 import ru.base.game.engine.items.Fist;
 
+import java.util.Objects;
+
 public final class Player implements Element {
     final DamagedItem[] inventory = new DamagedItem[10];
     DamagedItem selectedItem = new Fist();
@@ -44,5 +46,10 @@ public final class Player implements Element {
 
     public boolean isDead() {
         return health <= 0;
+    }
+
+    public void selectItem(int itemIndex) {
+        Objects.checkIndex(itemIndex, inventory.length);
+        selectedItem = inventory[itemIndex];
     }
 }

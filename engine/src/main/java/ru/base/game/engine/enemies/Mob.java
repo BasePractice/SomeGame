@@ -1,14 +1,21 @@
 package ru.base.game.engine.enemies;
 
+import com.google.gson.annotations.SerializedName;
 import ru.base.game.engine.Context;
 import ru.base.game.engine.Enemy;
 import ru.base.game.engine.items.DamagedItem;
 
 public abstract class Mob implements Enemy {
+    @SerializedName("selected_item")
     protected final DamagedItem selectedItem;
+    @SerializedName("health")
     protected int health;
+    @SerializedName("aggressive")
     protected boolean isAggressive;
+    @SerializedName("in_battle")
     protected boolean inBattle;
+    @SerializedName("bonus")
+    protected Bonus bonus;
 
     public Mob(DamagedItem selectedItem, int health, boolean isAggressive) {
         this.selectedItem = selectedItem;
@@ -41,5 +48,10 @@ public abstract class Mob implements Enemy {
         if (inBattle) {
             context.attack(selectedItem);
         }
+    }
+
+    @Override
+    public Bonus dieBonus() {
+        return bonus;
     }
 }

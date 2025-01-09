@@ -22,6 +22,10 @@ public final class StandardMap implements Map {
         }
     }
 
+    public StandardMap(MapElement[][] elements) {
+        this.elements = elements;
+    }
+
     @Override
     public <E> E at(int x, int y, Layer layer) {
         if (y >= 0 && y < elements.length && x >= 0 && x < elements[y].length) {

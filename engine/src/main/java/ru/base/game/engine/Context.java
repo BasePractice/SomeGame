@@ -6,4 +6,6 @@ public interface Context {
     void attack(DamagedItem selectedItem);
 
     void nextLevel();
+
+    boolean canAttack();
 }
