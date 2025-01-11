@@ -1,0 +1,11 @@
+logging:
+    level:
+        org:
+            springframework:
+                security:
+                    web: DEBUG
+                web:
+                    server: DEBUG
+                    socket: DEBUG
+server:
+    port: 8097

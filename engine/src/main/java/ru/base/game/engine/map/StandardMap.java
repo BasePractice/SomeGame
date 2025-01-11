@@ -36,7 +36,7 @@ public final class StandardMap implements Map {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <E> List<Coordinated<E>> list(Layer layer) {
+    public <E> List<Coordinated<E>> matrix(Layer layer) {
         List<Coordinated<E>> list = new ArrayList<>();
         for (int y = 0; y < elements.length; y++) {
             for (int x = 0; x < elements[y].length; x++) {
@@ -48,6 +48,18 @@ public final class StandardMap implements Map {
             }
         }
         return list;
+    }
+
+    @Override
+    public Coordinated<Matrix> matrix(int x, int y, int radius) {
+        Matrix matrix = new Matrix(radius * 2);
+        for (int yi = y - radius, yc = 0; yi < y + radius; yi++, yc++) {
+            for (int xi = x - radius, xc = 0; xi < x + radius; xi++, xc++) {
+                MapElement mapElement = elements[yi][xi];
+                matrix.set(xc, yc, mapElement);
+            }
+        }
+        return new Coordinated<>(x - radius, y - radius, matrix);
     }
 
     @Override

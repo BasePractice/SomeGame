@@ -27,6 +27,7 @@
 
     <modules>
         <module>engine</module>
+        <module>server</module>
     </modules>
 
     <dependencyManagement>
@@ -40,6 +41,11 @@
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
                 <version>2.11.0</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.base.game</groupId>
+                <artifactId>engine</artifactId>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
