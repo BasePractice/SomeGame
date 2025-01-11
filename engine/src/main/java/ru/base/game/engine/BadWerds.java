@@ -11,4 +11,5 @@ public class BadWerds {
     return randWerd;
     }
     }
+    //вызывается командой "g"
 
