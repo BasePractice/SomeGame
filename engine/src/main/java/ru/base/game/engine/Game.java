@@ -43,7 +43,7 @@ public final class Game implements Evaluator.ObjectTarget, Context {
                 userAttacked = false;
                 player.flyTo(0, 0);
                 map = generator.generate(level.getAndIncrement(), width, height, Map.Generator.Kind.D1D);
-                map.matrix(Map.Layer.EVENTS).stream()
+                map.list(Map.Layer.EVENTS).stream()
                     .filter(co -> co.source() instanceof Event e && e.type() == Event.Type.ENTER)
                     .findAny().ifPresent(c -> player.flyTo(c.x(), c.y()));
                 change(State.RUNNING);

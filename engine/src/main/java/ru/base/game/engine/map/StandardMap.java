@@ -36,7 +36,7 @@ public final class StandardMap implements Map {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <E> List<Coordinated<E>> matrix(Layer layer) {
+    public <E> List<Coordinated<E>> list(Layer layer) {
         List<Coordinated<E>> list = new ArrayList<>();
         for (int y = 0; y < elements.length; y++) {
             for (int x = 0; x < elements[y].length; x++) {

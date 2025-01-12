@@ -11,7 +11,7 @@ public interface Map extends Element {
 
     <E> E at(int x, int y, Layer layer);
 
-    <E> List<Coordinated<E>> matrix(Layer layer);
+    <E> List<Coordinated<E>> list(Layer layer);
 
     Coordinated<Matrix> matrix(int x, int y, int radius);
 

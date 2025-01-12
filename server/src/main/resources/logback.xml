@@ -5,7 +5,6 @@
             <pattern>%d %-5level %logger{40} - %.-10000msg%n</pattern>
         </encoder>
     </appender>
-
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
