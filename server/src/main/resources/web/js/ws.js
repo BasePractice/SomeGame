@@ -1,4 +1,4 @@
-window.onload = function () {
+function OnWebSocket() {
     let conn;
 
     let connected = document.getElementById("connected");

@@ -10,8 +10,16 @@
 </head>
 <body>
 
-<canvas id="c" width="1024" height="768"></canvas>
+<canvas id="game"></canvas>
+<div id="log">
+    <div id="fps"></div>
+    <div id="coords"></div>
+</div>
 <label id="connected" class="text-disconnected">Disconnected</label>
 <label id="version" class="text-version">Version: ${project.version}</label>
+<script src="/web/js/viewport.js"></script>
+<script src="/web/js/player.js"></script>
+<script src="/web/js/map.js"></script>
+<script src="/web/js/main.js"></script>
 </body>
 </html>

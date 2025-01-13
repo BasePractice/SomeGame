@@ -3,6 +3,7 @@ package ru.base.game.server.configuration;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.CloseStatus;
@@ -12,15 +13,29 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import ru.base.game.server.repository.UserRepository;
+
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @Configuration
 @EnableWebSocket
 public class WebSocketConfiguration implements WebSocketConfigurer {
+    private final UserRepository userRepository;
+
+    @Autowired
+    public WebSocketConfiguration(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Bean
     public SocketHandler socketHandler() {
-        return new SocketHandler();
+        return new SocketHandler(userRepository);
     }
 
     @Override
@@ -31,6 +46,12 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
     @Slf4j
     public static final class SocketHandler extends TextWebSocketHandler {
         private static final Gson GSON = new GsonBuilder().create();
+        private final Map<String, List<WebSocketSession>> sessions = new HashMap<>();
+        private final UserRepository userRepository;
+
+        public SocketHandler(UserRepository userRepository) {
+            this.userRepository = userRepository;
+        }
 
         @Override
         protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -41,18 +62,16 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
 
         @Override
         public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-            //TODO: deregister session
-            if (log.isDebugEnabled()) {
-                log.debug("Deregister {}: {}", session.getId(), status);
-            }
+            Principal principal = session.getPrincipal();
+            Objects.requireNonNull(principal);
+            sessions.computeIfAbsent(principal.getName(), k -> new ArrayList<>()).remove(session);
         }
 
         @Override
         public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-            //TODO: register session
-            if (log.isDebugEnabled()) {
-                log.debug("Register {}", session.getId());
-            }
+            Principal principal = session.getPrincipal();
+            Objects.requireNonNull(principal);
+            sessions.computeIfAbsent(principal.getName(), k -> new ArrayList<>()).add(session);
         }
     }
 }
