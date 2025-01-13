@@ -1,7 +1,5 @@
 package ru.base.game.server.configuration;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,30 +10,26 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-import org.springframework.web.socket.handler.TextWebSocketHandler;
-import ru.base.game.server.repository.UserRepository;
+import org.springframework.web.socket.handler.AbstractWebSocketHandler;
+import ru.base.game.server.service.UserGameService;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
 @Configuration
 @EnableWebSocket
 public class WebSocketConfiguration implements WebSocketConfigurer {
-    private final UserRepository userRepository;
+    private final UserGameService userGameService;
 
     @Autowired
-    public WebSocketConfiguration(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public WebSocketConfiguration(UserGameService userGameService) {
+        this.userGameService = userGameService;
     }
 
     @Bean
     public SocketHandler socketHandler() {
-        return new SocketHandler(userRepository);
+        return new SocketHandler(userGameService);
     }
 
     @Override
@@ -44,34 +38,32 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
     }
 
     @Slf4j
-    public static final class SocketHandler extends TextWebSocketHandler {
-        private static final Gson GSON = new GsonBuilder().create();
-        private final Map<String, List<WebSocketSession>> sessions = new HashMap<>();
-        private final UserRepository userRepository;
+    public static final class SocketHandler extends AbstractWebSocketHandler {
+        private final UserGameService userGameService;
 
-        public SocketHandler(UserRepository userRepository) {
-            this.userRepository = userRepository;
+        public SocketHandler(UserGameService userGameService) {
+            this.userGameService = userGameService;
         }
 
         @Override
-        protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-            if (log.isDebugEnabled()) {
-                log.debug("{}: {}", session.getId(), message);
-            }
-        }
-
-        @Override
-        public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        protected void handleTextMessage(WebSocketSession session, TextMessage message) {
             Principal principal = session.getPrincipal();
             Objects.requireNonNull(principal);
-            sessions.computeIfAbsent(principal.getName(), k -> new ArrayList<>()).remove(session);
+            userGameService.handleMessage(principal, message.getPayload());
+        }
+
+        @Override
+        public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+            Principal principal = session.getPrincipal();
+            Objects.requireNonNull(principal);
+            userGameService.removeSession(principal, session);
         }
 
         @Override
         public void afterConnectionEstablished(WebSocketSession session) throws Exception {
             Principal principal = session.getPrincipal();
             Objects.requireNonNull(principal);
-            sessions.computeIfAbsent(principal.getName(), k -> new ArrayList<>()).add(session);
+            userGameService.addSession(principal, session);
         }
     }
 }
