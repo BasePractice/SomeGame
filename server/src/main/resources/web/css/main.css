@@ -1,0 +1,29 @@
+.text-disconnected {
+    font-family: "Fira Code", serif;
+    font-size: 12pt;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+    color: #CC0000;
+}
+
+.text-connected {
+    font-family: "Fira Code", serif;
+    font-size: 12pt;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+    color: green;
+}
+
+.text-version {
+    font-family: "Fira Code", serif;
+    font-size: 12pt;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+    color: black;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}

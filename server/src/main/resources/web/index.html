@@ -3,24 +3,15 @@
 <head>
     <title>SoGa</title>
     <script type="application/javascript" src="/web/js/ws.js"></script>
+    <link href="/web/css/main.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap" rel="stylesheet">
-
-    <script type="text/css">
-        .fira-code-default {
-            font-family: "Fira Code", serif;
-            font-optical-sizing: auto;
-            font-weight: 300;
-            font-style: normal;
-        }
-    </script>
 </head>
 <body>
 
 <canvas id="c" width="1024" height="768"></canvas>
-<label id="connected" class="fira-code-default" style="font-size: 12pt; font-weight: normal; color: #CC0000">Disconnected</label>
-<label id="version" class="fira-code-default" style="font-size: 9pt; font-weight: normal; color: black; position: absolute; bottom: 0; right: 0;">version: </label>
-
+<label id="connected" class="text-disconnected">Disconnected</label>
+<label id="version" class="text-version">Version: ${project.version}</label>
 </body>
 </html>

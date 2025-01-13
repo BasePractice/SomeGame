@@ -7,7 +7,7 @@ window.onload = function () {
         conn = new WebSocket("ws://" + document.location.host + "/ws");
         conn.onclose = function (event) {
             window.connected = false;
-            connected.style.color = "#CC0000";
+            connected.classList.replace("text-connected", "text-disconnected");
             connected.innerText = "Disconnected";
         };
         conn.onmessage = function (event) {
@@ -26,7 +26,7 @@ window.onload = function () {
         };
         conn.onopen = function (event) {
             window.connected = true;
-            connected.style.color = "green";
+            connected.classList.replace("text-disconnected", "text-connected");
             connected.innerText = "Connected";
         }
     } else {
