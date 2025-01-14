@@ -1,18 +1,26 @@
 package ru.base.game.engine.map;
 
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import ru.base.game.engine.Context;
 import ru.base.game.engine.Enemy;
 import ru.base.game.engine.Event;
 import ru.base.game.engine.Map;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class StandardMap implements Map {
     private final MapElement[][] elements;
+    private final int width;
+    private final int height;
 
     public StandardMap(int width, int height) {
         this.elements = new MapElement[height][width];
+        this.width = width;
+        this.height = height;
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 elements[i][j] = new MapElement(Layer.values().length);
@@ -24,6 +32,8 @@ public final class StandardMap implements Map {
 
     public StandardMap(MapElement[][] elements) {
         this.elements = elements;
+        this.width = elements[0].length;
+        this.height = elements.length;
     }
 
     @Override
@@ -53,13 +63,21 @@ public final class StandardMap implements Map {
     @Override
     public Coordinated<Matrix> matrix(int x, int y, int radius) {
         Matrix matrix = new Matrix(radius * 2);
-        for (int yi = y - radius, yc = 0; yi < y + radius; yi++, yc++) {
-            for (int xi = x - radius, xc = 0; xi < x + radius; xi++, xc++) {
+        int ys = y - radius;
+        if (ys < 0) {
+            ys = 0;
+        }
+        int xs = x - radius;
+        if (xs < 0) {
+            xs = 0;
+        }
+        for (int yi = ys, yc = 0; yi >= 0 && yi < y + radius; yi++, yc++) {
+            for (int xi = xs, xc = 0; xi >= 0 && xi < x + radius; xi++, xc++) {
                 MapElement mapElement = elements[yi][xi];
                 matrix.set(xc, yc, mapElement);
             }
         }
-        return new Coordinated<>(x - radius, y - radius, matrix);
+        return new Coordinated<>(xs, ys, matrix);
     }
 
     @Override
@@ -69,12 +87,12 @@ public final class StandardMap implements Map {
 
     @Override
     public int width() {
-        return elements[0].length;
+        return width;
     }
 
     @Override
     public int height() {
-        return elements.length;
+        return height;
     }
 
     @Override
@@ -138,6 +156,19 @@ public final class StandardMap implements Map {
                     enemy.tick(context);
                 }
             }
+        }
+    }
+
+    public static final class Adapter extends TypeAdapter<Map> {
+
+        @Override
+        public void write(JsonWriter out, Map value) throws IOException {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Map read(JsonReader in) throws IOException {
+            throw new UnsupportedOperationException();
         }
     }
 }

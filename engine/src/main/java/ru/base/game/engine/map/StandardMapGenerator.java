@@ -70,7 +70,7 @@ public final class StandardMapGenerator implements Map.Generator {
                     }
                 }
             }
-            map.set(1, 1, Map.Layer.EVENTS, new Enter(this));
+//            map.set(1, 1, Map.Layer.EVENTS, new Enter(this));
             map.set(width - 1, height - 1, Map.Layer.EVENTS, new Exit(this));
             MazeExtension.Point[] path = extension.findPath(generated);
             int lxTo = -1;
@@ -89,6 +89,8 @@ public final class StandardMapGenerator implements Map.Generator {
                 lxTo = xTo;
                 lyTo = yTo;
             }
+            MazeExtension.Point center = path[path.length / 2];
+            map.set(center.x(), center.y(), Map.Layer.EVENTS, new Enter(this));
             try {
                 BufferedImage image = MazeUtilities.createImage(generated, path);
                 ImageIO.write(image, "PNG", new File(String.format("2D.Level-%d.png", level)));

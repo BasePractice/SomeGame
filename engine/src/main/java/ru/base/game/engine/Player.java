@@ -12,6 +12,18 @@ public final class Player implements Element {
     int x;
     int y;
 
+    public int x() {
+        return x;
+    }
+
+    public int y() {
+        return y;
+    }
+
+    public int visibleRadius() {
+        return 3;
+    }
+
     @Override
     public void tick(Context context) {
         //Nothing

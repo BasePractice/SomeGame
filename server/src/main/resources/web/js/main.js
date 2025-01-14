@@ -66,11 +66,9 @@ const fps = {
 function Setup() {
     context = document.getElementById("game").getContext("2d");
     viewport = new Viewport(0, 0, config.win.width, config.win.height);
-    player = new Player(4, 3);
-    map = new Map("Map");
-
+    player = new Player(0, 0);
+    map = new Map();
     Sizing();
-
     setInterval(function () {
         fps.shown = fps.count;
     }, 1000);

@@ -14,12 +14,17 @@ public final class Game implements Evaluator.ObjectTarget, Context {
     private final VirtualMachine vm = new VirtualMachine.Default(this);
     private final AtomicInteger level = new AtomicInteger(1);
     private final Map.Generator generator = new StandardMapGenerator();
-    private final int width = 20;
-    private final int height = 20;
+    private final int width = 41;
+    private final int height = 41;
+    private final Listener listener;
     private final Player player = new Player();
     private boolean userAttacked = false;
     private Map map;
     private State state = State.INITIATE;
+
+    public Game(Listener listener) {
+        this.listener = listener;
+    }
 
     public void addCommand(String text) {
         Command.Instance[] parsed = new Parser.Default(text).parse();
@@ -42,18 +47,22 @@ public final class Game implements Evaluator.ObjectTarget, Context {
             case NEXT_LEVEL: {
                 userAttacked = false;
                 player.flyTo(0, 0);
-                map = generator.generate(level.getAndIncrement(), width, height, Map.Generator.Kind.D1D);
+                map = generator.generate(level.getAndIncrement(), width, height, Map.Generator.Kind.D2D);
                 map.list(Map.Layer.EVENTS).stream()
                     .filter(co -> co.source() instanceof Event e && e.type() == Event.Type.ENTER)
                     .findAny().ifPresent(c -> player.flyTo(c.x(), c.y()));
                 change(State.RUNNING);
-                System.out.println(map);
+                emitRefresh();
                 break;
             }
             default: {
                 break;
             }
         }
+    }
+
+    private void emitRefresh() {
+        listener.emit(new Listener.Refresh(map, player));
     }
 
     private void change(State state) {
@@ -104,6 +113,7 @@ public final class Game implements Evaluator.ObjectTarget, Context {
                         map.set(x, y, Map.Layer.EVENTS, null);
                     }
                 }
+                emitRefresh();
             } else {
                 change(State.BATTLE);
                 if (userAttacked) {
@@ -129,6 +139,7 @@ public final class Game implements Evaluator.ObjectTarget, Context {
                     change(State.BATTLE);
                 }
             }
+            emitRefresh();
         }
     }
 
@@ -207,6 +218,11 @@ public final class Game implements Evaluator.ObjectTarget, Context {
     @Override
     public boolean canAttack() {
         return userAttacked;
+    }
+
+    public Map.Matrix matrix() {
+        Map.Coordinated<Map.Matrix> coordinated = map.matrix(player.x, player.y, 5);
+        return coordinated.source();
     }
 
     private enum State {
