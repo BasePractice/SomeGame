@@ -20,8 +20,8 @@ public final class Player implements Element {
         return y;
     }
 
-    public int visibleRadius() {
-        return 3;
+    public int viewport() {
+        return 20;
     }
 
     @Override

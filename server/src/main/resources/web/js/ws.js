@@ -21,10 +21,10 @@ function OnWebSocket() {
                     console.error(error);
                     return;
                 }
-                if (output.type === "refresh") {
-                    map.refresh(output.data);
-                    player.pos.x = output.data.player.x;
-                    player.pos.y = output.data.player.y;
+                if (output.type === "level") {
+                    player.pos.x = output.data.x * config.size.char;
+                    player.pos.y = output.data.y * config.size.char;
+                    map.initiate(output.data);
                 }
                 console.log(output);
             }

@@ -6,6 +6,7 @@ import ru.base.game.engine.lang.Evaluator;
 import ru.base.game.engine.lang.Parser;
 import ru.base.game.engine.lang.VirtualMachine;
 import ru.base.game.engine.map.StandardMapGenerator;
+import ru.base.game.engine.messages.SourceLevel;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -16,13 +17,13 @@ public final class Game implements Evaluator.ObjectTarget, Context {
     private final Map.Generator generator = new StandardMapGenerator();
     private final int width = 41;
     private final int height = 41;
-    private final Listener listener;
+    private final Message.Listener listener;
     private final Player player = new Player();
     private boolean userAttacked = false;
     private Map map;
     private State state = State.INITIATE;
 
-    public Game(Listener listener) {
+    public Game(Message.Listener listener) {
         this.listener = listener;
     }
 
@@ -52,7 +53,7 @@ public final class Game implements Evaluator.ObjectTarget, Context {
                     .filter(co -> co.source() instanceof Event e && e.type() == Event.Type.ENTER)
                     .findAny().ifPresent(c -> player.flyTo(c.x(), c.y()));
                 change(State.RUNNING);
-                emitRefresh();
+                emitLevel();
                 break;
             }
             default: {
@@ -61,8 +62,21 @@ public final class Game implements Evaluator.ObjectTarget, Context {
         }
     }
 
-    private void emitRefresh() {
-        listener.emit(new Listener.Refresh(map, player));
+    private void emitLevel() {
+        int[][] layers = new int[width][height];
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                layers[x][y] = ((Map.BlockType) map.at(x, y, Map.Layer.BLOCKS)).ordinal() + 2;
+            }
+        }
+        var assets = new SourceLevel.Asset[]{
+            new SourceLevel.Asset("grass-short", false, 0),
+            new SourceLevel.Asset("grass-tall", false, 1),
+            new SourceLevel.Asset("bush", true, 0),
+            new SourceLevel.Asset("wave", true, 1),
+        };
+        listener.emit(new Message<>(Message.Type.LEVEL,
+            new SourceLevel(width, height, layers, player.x(), player.y(), player.viewport(), assets)));
     }
 
     private void change(State state) {
@@ -113,7 +127,7 @@ public final class Game implements Evaluator.ObjectTarget, Context {
                         map.set(x, y, Map.Layer.EVENTS, null);
                     }
                 }
-                emitRefresh();
+                emitLevel();
             } else {
                 change(State.BATTLE);
                 if (userAttacked) {
@@ -139,7 +153,7 @@ public final class Game implements Evaluator.ObjectTarget, Context {
                     change(State.BATTLE);
                 }
             }
-            emitRefresh();
+            emitLevel();
         }
     }
 

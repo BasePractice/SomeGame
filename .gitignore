@@ -3,3 +3,4 @@ target
 *.iml
 engine/program.some
 engine/*.png
+*.png

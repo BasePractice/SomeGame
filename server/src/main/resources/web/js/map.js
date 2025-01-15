@@ -7,7 +7,7 @@ const Map = function () {
 
 
 Map.prototype = {
-    refresh: function (data) {
+    initiate: function (data) {
         map.data = data;
         map.width = data.width;
         map.height = data.height;

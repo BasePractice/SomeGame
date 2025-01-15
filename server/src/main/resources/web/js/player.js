@@ -20,7 +20,7 @@ const Player = function(tile_x, tile_y) {
         y: tile_y
     };
     this.torch = {
-        lit: false,
+        lit: true,
         frame: 0
     };
 };
@@ -51,7 +51,7 @@ Player.prototype = {
         let light_x = pos_x + (config.size.tile / 2);
         let light_y = pos_y + (config.size.tile / 2);
 
-        let radius = 100;
+        let radius = map.data.viewport;
         let radialGradient = context.createRadialGradient(light_x, light_y, 0, light_x, light_y, radius);
 
         radialGradient.addColorStop(0, "rgba(238, 229, 171, 0.325)");

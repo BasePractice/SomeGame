@@ -1,17 +1,15 @@
 package ru.base.game.server.service;
 
 import ru.base.game.engine.Game;
-import ru.base.game.engine.Listener;
-import ru.base.game.engine.Map;
-import ru.base.game.engine.Player;
+import ru.base.game.engine.Message;
 import ru.base.game.server.dto.EventObject;
-import ru.base.game.server.dto.RefreshObject;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.EmptyCatchBlock"})
-public final class GameCircle implements Runnable, Listener {
+public final class GameCircle implements Runnable, Message.Listener {
     final String username;
     final Game game;
     private final AtomicBoolean running = new AtomicBoolean(true);
@@ -50,11 +48,8 @@ public final class GameCircle implements Runnable, Listener {
     }
 
     @Override
-    public <E> void emit(Event<E> event) {
-        if (event instanceof Refresh refresh) {
-            Player player = refresh.player();
-            Map.Coordinated<Map.Matrix> matrix = refresh.data().matrix(player.x(), player.y(), player.visibleRadius());
-            userGameService.sendEvent(username, new EventObject<>("refresh", new RefreshObject(player, matrix.source())));
-        }
+    public <S extends Message.Source> void emit(Message<S> message) {
+        userGameService.sendEvent(username, new EventObject<>(
+            message.type().name().toLowerCase(Locale.ROOT), message.source()));
     }
 }
